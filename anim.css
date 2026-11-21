@@ -1,0 +1,72 @@
+/* Elemen disembunyikan dulu, lalu "dibangun" oleh panah mouse */
+html.anim-on :is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.chip,.settings):not(.shown) {
+  opacity: 0;
+}
+:is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.chip,.settings) {
+  transition: opacity .35s ease;
+}
+.settings { transition: opacity .35s ease, background .15s ease; }
+
+#fx {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Kotak seleksi */
+.sel {
+  position: absolute;
+  border: 1px solid #0d99ff;
+  background: rgba(13, 153, 255, .10);
+  opacity: 0;
+  transition: opacity .2s ease;
+  z-index: 1;
+}
+.sel .h {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  background: #fff;
+  border: 1px solid #0d99ff;
+  box-sizing: border-box;
+}
+.sel .tl { left: -4px;  top: -4px; }
+.sel .tr { right: -4px; top: -4px; }
+.sel .bl { left: -4px;  bottom: -4px; }
+.sel .br { right: -4px; bottom: -4px; }
+.sel .dim {
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  transform: translateX(-50%);
+  margin-top: 8px;
+  background: #0d99ff;
+  color: #fff;
+  font: 600 10px/1 system-ui, sans-serif;
+  padding: 3px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Panah mouse + label nama */
+.cur {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  will-change: transform;
+  z-index: 2;
+}
+.cur svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+.cur span {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  color: #fff;
+  font: 600 11px/1 system-ui, sans-serif;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
