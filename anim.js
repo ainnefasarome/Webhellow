@@ -35,7 +35,7 @@
   }
 
   /* ================= UTIL ================= */
-  var SEL = '.card,.avatar-wrap,.badge,.stats,.chip,.ic,.settings';
+  var SEL = '.card,.avatar-wrap,.stats,.skillgif,.settings';
   function qa(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
   function q(s) { return document.querySelector(s); }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -56,27 +56,15 @@
   function splitChars(el) {
     var s = el.textContent.replace(/\s+/g, ' ').trim();
     el.textContent = '';
-    for (var i = 0; i < s.length; i++) {
+    Array.from(s).forEach(function (ch) {
       var sp = document.createElement('span');
-      sp.className = 'c';
-      sp.textContent = s.charAt(i);
+      sp.className = 'c' + (ch === '\uD83D\uDC4B' ? ' wave' : '');
+      sp.textContent = ch;
       el.appendChild(sp);
-    }
+    });
   }
   function prep() {
     qa('.info h1,.info p,.stats .label,.stats .num,.skills h2,.settings').forEach(splitChars);
-    qa('.chip').forEach(function (chip) {
-      var nodes = chip.childNodes, tn = null;
-      for (var i = nodes.length - 1; i >= 0; i--) {
-        if (nodes[i].nodeType === 3 && nodes[i].nodeValue.trim()) { tn = nodes[i]; break; }
-      }
-      if (!tn) return;
-      var holder = document.createElement('span');
-      holder.className = 't';
-      holder.textContent = tn.nodeValue.trim();
-      chip.replaceChild(holder, tn);
-      splitChars(holder);
-    });
   }
 
   /* ================= KURSOR ================= */
@@ -209,53 +197,34 @@
     await leave(c);
   }
 
-  /* ================= PEMBAGIAN TUGAS (7 KURSOR) ================= */
+  /* ================= PEMBAGIAN TUGAS (4 KURSOR) ================= */
   async function run() {
     prep();
-    var chips = qa('.chip');
     var cardD = defer(), statsD = defer(), btnD = defer();
-    var pillD = chips.map(defer), iconD = chips.map(defer);
-
     var tasks = [];
 
-    // 1. Pembuat kotak: kartu -> kotak statistik -> tombol
+    // 1. Pembuat kotak: kartu -> statistik -> kotak GIF -> tombol
     tasks.push(worker(null, q('.card'), async function (c) {
-      await shell(c, q('.card'));            cardD.res();
-      await shell(c, q('.stats'));           statsD.res();
-      await shell(c, q('.settings'));        btnD.res();
+      await shell(c, q('.card'));         cardD.res();
+      await shell(c, q('.stats'));        statsD.res();
+      await shell(c, q('.skillgif'));
+      await shell(c, q('.settings'));     btnD.res();
     }));
 
-    // 2. Pembuat pil skill: 7 pil berurutan
-    tasks.push(worker(cardD.p, chips[0], async function (c) {
-      for (var i = 0; i < chips.length; i++) {
-        await shell(c, chips[i], true);
-        pillD[i].res();
-      }
-    }));
-
-    // 3. Pembuat ikon: foto profil -> badge -> ikon tiap skill
+    // 2. Pembuat foto profil: tarik lingkaran, lalu logo menulis dirinya sendiri
     tasks.push(worker(cardD.p, q('.avatar-wrap'), async function (c) {
       await shell(c, q('.avatar-wrap'));
-      await shell(c, q('.badge'), true);
-      for (var i = 0; i < chips.length; i++) {
-        var ic = chips[i].querySelector('.ic');
-        var r = ic.getBoundingClientRect();
-        await travel(c, r.left + r.width / 2, r.top + r.height / 2, true);
-        await pillD[i].p;
-        await click(c);
-        ic.classList.add('shown');
-        iconD[i].res();
-      }
+      if (window.BSLogo) window.BSLogo.start();
     }));
 
-    // 4. Penulis teks atas: nama -> lokasi -> "Skills:"
+    // 3. Penulis teks atas: nama -> lokasi -> judul
     tasks.push(worker(cardD.p, q('.info h1'), async function (c) {
       await typeEl(c, q('.info h1'), 110);
-      await typeEl(c, q('.info p'), 38);
-      await typeEl(c, q('.skills h2'), 80);
+      await typeEl(c, q('.info p'), 40);
+      await typeEl(c, q('.skills h2'), 90);
     }));
 
-    // 5. Penulis teks bawah: Following/Followers + tulisan tombol
+    // 4. Penulis teks bawah: Following/Followers + tulisan tombol
     tasks.push(worker(statsD.p, q('.stats .label'), async function (c) {
       var lb = qa('.stats .label'), nm = qa('.stats .num');
       await typeEl(c, lb[0], 55);
@@ -266,17 +235,6 @@
       await typeEl(c, q('.settings'), 50);
     }));
 
-    // 6 & 7. Penulis nama skill (dibagi dua: chip 1-3 dan chip 4-7)
-    function chipWriter(from, to, depIdx) {
-      return worker(pillD[depIdx].p, chips[from], async function (c) {
-        for (var i = from; i <= to; i++) {
-          await typeEl(c, chips[i].querySelector('.t'), 55, iconD[i].p);
-        }
-      });
-    }
-    tasks.push(chipWriter(0, 2, 0));
-    tasks.push(chipWriter(3, 6, 2));
-
     await Promise.all(tasks);
     await sleep(250);
     showAll();
@@ -284,3 +242,4 @@
 
   run().catch(showAll);
 })();
+
