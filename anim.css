@@ -1,12 +1,44 @@
-/* Elemen disembunyikan dulu, lalu "dibangun" oleh panah mouse */
-html.anim-on :is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.chip,.settings):not(.shown) {
+/* ===== Elemen disembunyikan dulu, lalu "dibangun" oleh kursor ===== */
+html.anim-on :is(.card,.avatar-wrap,.badge,.stats,.chip,.settings):not(.shown) {
   opacity: 0;
 }
-:is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.chip,.settings) {
+:is(.card,.avatar-wrap,.badge,.stats,.chip) {
   transition: opacity .35s ease;
 }
 .settings { transition: opacity .35s ease, background .15s ease; }
 
+/* ikon skill muncul membal */
+html.anim-on .ic:not(.shown) {
+  opacity: 0;
+  transform: scale(.3);
+}
+.ic { transition: opacity .25s ease, transform .3s cubic-bezier(.3, 1.6, .5, 1); }
+
+/* teks: tiap huruf tersembunyi sampai "diketik" */
+html.anim-on .c:not(.on) { visibility: hidden; }
+
+/* garis ketik (caret keyboard) */
+.caret {
+  display: inline-block;
+  width: 0;
+  height: 1.05em;
+  vertical-align: -0.15em;
+  position: relative;
+  animation: caretblink 1s steps(1) infinite;
+}
+.caret::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: currentColor;
+}
+.caret.typing { animation: none; }
+@keyframes caretblink { 50% { opacity: 0; } }
+
+/* ===== Lapisan kursor ===== */
 #fx {
   position: fixed;
   inset: 0;
@@ -15,7 +47,7 @@ html.anim-on :is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.c
   z-index: 50;
 }
 
-/* Kotak seleksi */
+/* kotak seleksi saat menarik elemen */
 .sel {
   position: absolute;
   border: 1px solid #0d99ff;
@@ -36,21 +68,8 @@ html.anim-on :is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.c
 .sel .tr { right: -4px; top: -4px; }
 .sel .bl { left: -4px;  bottom: -4px; }
 .sel .br { right: -4px; bottom: -4px; }
-.sel .dim {
-  position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-50%);
-  margin-top: 8px;
-  background: #0d99ff;
-  color: #fff;
-  font: 600 10px/1 system-ui, sans-serif;
-  padding: 3px 6px;
-  border-radius: 4px;
-  white-space: nowrap;
-}
 
-/* Panah mouse + label nama */
+/* kursor mouse biasa (putih, garis hitam), tanpa label */
 .cur {
   position: absolute;
   left: 0;
@@ -59,14 +78,9 @@ html.anim-on :is(.card,.avatar-wrap,.badge,.info h1,.info p,.stats,.skills h2,.c
   will-change: transform;
   z-index: 2;
 }
-.cur svg { display: block; filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
-.cur span {
-  position: absolute;
-  left: 14px;
-  top: 16px;
-  color: #fff;
-  font: 600 11px/1 system-ui, sans-serif;
-  padding: 4px 8px;
-  border-radius: 999px;
-  white-space: nowrap;
+.cur svg {
+  display: block;
+  transform-origin: 1px 1px;
+  transition: transform .09s ease;
+  filter: drop-shadow(0 1px 1.5px rgba(0, 0, 0, .55));
 }
