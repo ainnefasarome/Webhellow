@@ -1,8 +1,8 @@
 /* ===== Elemen disembunyikan dulu, lalu "dibangun" oleh kursor ===== */
-html.anim-on :is(.card,.avatar-wrap,.stats,.skillgif,.settings):not(.shown) {
+html.anim-on :is(.card,.avatar-wrap,.stats,.stat-bar,.skillgif,.settings,.cat):not(.shown) {
   opacity: 0;
 }
-:is(.card,.avatar-wrap,.stats,.skillgif) {
+:is(.card,.avatar-wrap,.stats,.stat-bar,.skillgif,.cat) {
   transition: opacity .35s ease;
 }
 .settings { transition: opacity .35s ease, background .15s ease; }

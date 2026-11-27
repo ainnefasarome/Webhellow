@@ -15,7 +15,7 @@
   cv.style.width = cssW + 'px';
   cv.style.height = cssH + 'px';
 
-  var LW = 1.5;                       // tebal garis (px)
+  var LW = parseFloat(cv.getAttribute('data-lw')) || 1.5;   // tebal garis (px)
   var pad = LW * 2;
   var areaW = cssW - pad * 2, areaH = cssH - pad * 2, logoW, logoH;
   if (areaW / areaH > ASPECT) { logoH = areaH; logoW = areaH * ASPECT; }

@@ -23,19 +23,15 @@ body {
 .profile {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   padding: 18px 18px 16px;
 }
 
-.avatar-wrap { position: relative; width: 64px; height: 64px; flex-shrink: 0; }
+.avatar-wrap { position: relative; width: 70px; height: 64px; flex-shrink: 0; }
 
 .avatar {
-  width: 64px;
+  width: 70px;
   height: 64px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #fff;
-  background: #14161b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -57,17 +53,32 @@ body {
 }
 .stat + .stat { border-left: 1px solid #353a45; }
 .stat .label { display: block; font-size: 13px; color: #c2c7d2; }
-.stat .num   { display: block; font-size: 19px; font-weight: 700; margin-top: 4px; }
+.stat .num   { display: block; font-size: 19px; font-weight: 700; margin-top: 4px; font-variant-numeric: tabular-nums; }
+.stat-bar { display: flex; align-items: center; justify-content: center; padding: 8px 0; }
+.barcode { display: block; height: 46px; width: auto; max-width: 88%; pointer-events: none; user-select: none; -webkit-user-drag: none; }
 
 .skills { padding: 16px 18px 6px; }
 .skills h2 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
 .skillgif { position: relative; display: block; width: 100%; }
 .skillgif .ico { position: absolute; left: 0; top: 0; display: block; max-width: none; pointer-events: none; user-select: none; -webkit-user-drag: none; will-change: transform; }
 
+.btnwrap { position: relative; margin: 14px 18px 18px; }
+.cat {
+  position: absolute;
+  left: 20px;
+  bottom: 100%;
+  width: 84px;
+  height: auto;
+  margin-bottom: -1px;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
 .settings {
   display: block;
-  width: calc(100% - 36px);
-  margin: 14px 18px 18px;
+  width: 100%;
+  margin: 0;
   padding: 14px 0;
   border: none;
   border-radius: 6px;

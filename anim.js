@@ -35,12 +35,31 @@
   }
 
   /* ================= UTIL ================= */
-  var SEL = '.card,.avatar-wrap,.stats,.skillgif,.settings';
+  var SEL = '.card,.avatar-wrap,.stats,.stat-bar,.skillgif,.settings,.cat';
   function qa(s) { return Array.prototype.slice.call(document.querySelectorAll(s)); }
   function q(s) { return document.querySelector(s); }
   function sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
   function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
   function rand(a, b) { return a + Math.random() * (b - a); }
+
+  // angka berjalan terus: naik bertahap seperti GIF referensi (125 frame x 40 ms, +299), lalu mengulang
+  var counting = false;
+  var COUNT_BASE = 24, COUNT_RANGE = 299, COUNT_FRAMES = 125, COUNT_MS = 40;
+  function startCounter() {
+    if (counting) return;
+    var el = q('.stats .num');
+    if (!el) return;
+    counting = true;
+    var last = -1, t0 = null;
+    function tick(ts) {
+      if (t0 === null) t0 = ts;
+      var f = Math.floor((ts - t0) / COUNT_MS) % COUNT_FRAMES;
+      var v = COUNT_BASE + Math.floor(f * COUNT_RANGE / (COUNT_FRAMES - 1));
+      if (v !== last) { el.textContent = String(v); last = v; }
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
 
   function showAll() {
     qa(SEL).forEach(function (e) { e.classList.add('shown'); });
@@ -51,6 +70,8 @@
 
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (reduce) { showAll(); return; }
+  var _showAll = showAll;
+  showAll = function () { _showAll(); startCounter(); };
 
   /* ================= PERSIAPAN TEKS (dipecah per huruf) ================= */
   function splitChars(el) {
@@ -197,21 +218,22 @@
     await leave(c);
   }
 
-  /* ================= PEMBAGIAN TUGAS (4 KURSOR) ================= */
+  /* ================= PEMBAGIAN TUGAS (5 KURSOR) ================= */
   async function run() {
     prep();
     var cardD = defer(), statsD = defer(), btnD = defer();
     var tasks = [];
 
-    // 1. Pembuat kotak: kartu -> statistik -> kotak GIF -> tombol
+    // 1. Pembuat kotak: kartu -> statistik -> kotak barcode -> kotak ikon -> tombol
     tasks.push(worker(null, q('.card'), async function (c) {
       await shell(c, q('.card'));         cardD.res();
       await shell(c, q('.stats'));        statsD.res();
+      await shell(c, q('.stat-bar'), true);
       await shell(c, q('.skillgif'));
       await shell(c, q('.settings'));     btnD.res();
     }));
 
-    // 2. Pembuat foto profil: tarik lingkaran, lalu logo menulis dirinya sendiri
+    // 2. Pembuat logo: tarik area logo, lalu logo menulis dirinya sendiri
     tasks.push(worker(cardD.p, q('.avatar-wrap'), async function (c) {
       await shell(c, q('.avatar-wrap'));
       if (window.BSLogo) window.BSLogo.start();
@@ -224,15 +246,17 @@
       await typeEl(c, q('.skills h2'), 90);
     }));
 
-    // 4. Penulis teks bawah: Following/Followers + tulisan tombol
+    // 4. Penulis statistik: "Retink" + angka, lalu angkanya mulai berjalan
     tasks.push(worker(statsD.p, q('.stats .label'), async function (c) {
-      var lb = qa('.stats .label'), nm = qa('.stats .num');
-      await typeEl(c, lb[0], 55);
-      await typeEl(c, nm[0], 140);
-      await typeEl(c, lb[1], 55);
-      await typeEl(c, nm[1], 140);
-      await btnD.p;
+      await typeEl(c, q('.stats .label'), 70);
+      await typeEl(c, q('.stats .num'), 140);
+      startCounter();
+    }));
+
+    // 5. Penulis tombol: mengetik tulisan tombol, lalu kucing muncul
+    tasks.push(worker(btnD.p, q('.settings'), async function (c) {
       await typeEl(c, q('.settings'), 50);
+      q('.cat').classList.add('shown');
     }));
 
     await Promise.all(tasks);
