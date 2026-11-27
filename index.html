@@ -5,8 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Banghans</title>
 <script>document.documentElement.classList.add("anim-on");setTimeout(function(){document.documentElement.classList.remove("anim-on")},25000)</script>
-<link rel="stylesheet" href="style.css?v=4">
-<link rel="stylesheet" href="anim.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
+<link rel="stylesheet" href="anim.css?v=5">
 </head>
 <body>
 <div class="card">
@@ -36,15 +36,23 @@
 
   <div class="skills">
     <h2>Kasabua Ade</h2>
-    <img class="skillgif" src="skills.webp" width="513" height="276" alt="">
+    <div class="skillgif" id="skillgif" style="aspect-ratio:547/321">
+      <img class="ico" data-k="framer" src="ico-framer.webp?v=5" alt="" draggable="false">
+      <img class="ico" data-k="notion" src="ico-notion.webp?v=5" alt="" draggable="false">
+      <img class="ico" data-k="webflow" src="ico-webflow.webp?v=5" alt="" draggable="false">
+      <img class="ico" data-k="hubspot" src="ico-hubspot.webp?v=5" alt="" draggable="false">
+      <img class="ico" data-k="figma" src="ico-figma.webp?v=5" alt="" draggable="false">
+      <img class="ico" data-k="ga" src="ico-ga.webp?v=5" alt="" draggable="false">
+    </div>
   </div>
 
   <button class="settings" type="button">PELAJARI LEBIH LANJUT</button>
 
 </div>
 <audio id="bgm" src="music.mp3" loop preload="auto"></audio>
-<script src="logo.js?v=4"></script>
-<script src="anim.js?v=4"></script>
+<script src="logo.js?v=5"></script>
+<script src="skills.js?v=5"></script>
+<script src="anim.js?v=5"></script>
 </body>
 </html>
 

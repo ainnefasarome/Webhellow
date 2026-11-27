@@ -61,7 +61,8 @@ body {
 
 .skills { padding: 16px 18px 6px; }
 .skills h2 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
-.skillgif { display: block; width: 100%; height: auto; }
+.skillgif { position: relative; display: block; width: 100%; }
+.skillgif .ico { position: absolute; left: 0; top: 0; display: block; max-width: none; pointer-events: none; user-select: none; -webkit-user-drag: none; will-change: transform; }
 
 .settings {
   display: block;
